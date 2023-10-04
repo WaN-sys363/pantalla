@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartidor de Pantalla en HTML</title>
+    <style>
+        video {
+            max-width: 100%;
+            max-height: 100%;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Compartidor de Pantalla en HTML</h1>
+
+<!-- Botones para iniciar y detener el compartidor de pantalla -->
+<button id="startButton">Compartir Pantalla</button>
+<button id="stopButton" disabled>Detener Compartir</button>
+
+<!-- Elemento de video para mostrar la pantalla compartida -->
+<video id="screenShareVideo" autoplay></video>
+
+<script>
+    // Obtener elementos del DOM
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const screenShareVideo = document.getElementById('screenShareVideo');
+
+    // Manejador para el clic en el botón de inicio
+    startButton.addEventListener('click', startScreenShare);
+
+    // Manejador para el clic en el botón de detener
+    stopButton.addEventListener('click', stopScreenShare);
+
+    // Función para iniciar el compartidor de pantalla
+    async function startScreenShare() {
+        try {
+            // Obtener acceso a la pantalla
+            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+
+            // Mostrar la pantalla en el elemento de video
+            screenShareVideo.srcObject = stream;
+
+            // Hacer visible el elemento de video
+            screenShareVideo.style.display = 'block';
+
+            // Deshabilitar el botón de inicio y habilitar el botón de detener
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        } catch (error) {
+            console.error('Error al compartir pantalla:', error);
+        }
+    }
+
+    // Función para detener el compartidor de pantalla
+    function stopScreenShare() {
+        // Obtener la corriente de la pantalla actual
+        const stream = screenShareVideo.srcObject;
+
+        // Detener todos los tracks de la corriente
+        stream.getTracks().forEach(track => track.stop());
+
+        // Detener la reproducción del video
+        screenShareVideo.srcObject = null;
+
+        // Ocultar el elemento de video
+        screenShareVideo.style.display = 'none';
+
+        // Habilitar el botón de inicio y deshabilitar el botón de detener
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    }
+</script>
+
+</body>
+</html>
